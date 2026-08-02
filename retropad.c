@@ -602,8 +602,16 @@ static void UpdateMenuStates(HWND hwnd) {
         EnableMenuItem(menu, IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | MF_ENABLED);
     }
 
-    BOOL modified = (SendMessageW(g_app.hwndEdit, EM_GETMODIFY, 0, 0) != 0);
-    EnableMenuItem(menu, IDM_FILE_SAVE, MF_BYCOMMAND | (modified ? MF_ENABLED : MF_GRAYED));
+    // g_app.modified, not the edit control's own EM_GETMODIFY flag. Word wrap
+    // recreates the EDIT control and restores its contents with
+    // SetWindowTextW, which leaves the new control's modify flag clear while
+    // the document is still unsaved. Gating on the control made File > Save
+    // grey out after a wrap toggle even though the title still showed the
+    // asterisk -- and because TranslateAccelerator declines an accelerator
+    // whose menu item is disabled, Ctrl+S went dead along with it, silently,
+    // until the next keystroke.
+    EnableMenuItem(menu, IDM_FILE_SAVE,
+                   MF_BYCOMMAND | (g_app.modified ? MF_ENABLED : MF_GRAYED));
 }
 
 static void HandleCommand(HWND hwnd, WPARAM wParam, LPARAM lParam) {
@@ -807,6 +815,18 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
     MSG msg;
     while (GetMessageW(&msg, NULL, 0, 0)) {
+        // The Find and Replace dialogs are modeless, so nothing dispatches
+        // their keyboard navigation unless this loop hands their messages to
+        // IsDialogMessage first. Without it Enter, Tab and the mnemonics do
+        // nothing in either dialog and only the mouse works.
+        //
+        // Ahead of TranslateAccelerator, because these are separate top-level
+        // windows rather than children of the main one: the accelerator table
+        // does not apply to them, and a plain letter typed into "Find What"
+        // must reach the edit box rather than be swallowed.
+        if (g_app.hFindDlg && IsDialogMessageW(g_app.hFindDlg, &msg)) continue;
+        if (g_app.hReplaceDlg && IsDialogMessageW(g_app.hReplaceDlg, &msg)) continue;
+
         if (!accel || !TranslateAcceleratorW(hwnd, accel, &msg)) {
             TranslateMessage(&msg);
             DispatchMessageW(&msg);
