@@ -6,6 +6,8 @@
 #include <commctrl.h>
 #include <shellapi.h>
 #include <strsafe.h>
+#include <string.h>
+#include <wchar.h>
 #include "resource.h"
 #include "file_io.h"
 
@@ -240,7 +242,7 @@ static void CreateEditControl(HWND hwnd) {
         style |= WS_HSCROLL | ES_AUTOHSCROLL;
     }
 
-    g_app.hwndEdit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", NULL, style, 0, 0, 0, 0, hwnd, (HMENU)1, g_hInst, NULL);
+    g_app.hwndEdit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", NULL, style, 0, 0, 0, 0, hwnd, (HMENU)(UINT_PTR)1, g_hInst, NULL);
     if (g_app.hwndEdit && g_app.hFont) {
         ApplyFontToEdit(g_app.hwndEdit, g_app.hFont);
     }

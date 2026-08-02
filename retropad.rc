@@ -52,20 +52,27 @@ END
 
 IDC_RETROPAD ACCELERATORS
 BEGIN
-    "^N",       IDM_FILE_NEW,       VIRTKEY, CONTROL
-    "^O",       IDM_FILE_OPEN,      VIRTKEY, CONTROL
-    "^S",       IDM_FILE_SAVE,      VIRTKEY, CONTROL
-    "^P",       IDM_FILE_PRINT,     VIRTKEY, CONTROL
-    "^Z",       IDM_EDIT_UNDO,      VIRTKEY, CONTROL
-    "^X",       IDM_EDIT_CUT,       VIRTKEY, CONTROL
-    "^C",       IDM_EDIT_COPY,      VIRTKEY, CONTROL
-    "^V",       IDM_EDIT_PASTE,     VIRTKEY, CONTROL
+    // "N", ..., VIRTKEY, CONTROL -- not "^N". The caret form is the ASCII
+    // spelling of a control character (^N is 0x0E), and pairing it with
+    // VIRTKEY asks the resource compiler for two different things at once:
+    // MSVC's rc accepts it with warning RC4204 ("ASCII character not
+    // equivalent to virtual key code") and emits the wrong key code, while
+    // llvm-rc rejects it outright. With VIRTKEY the character is the key's
+    // name and CONTROL supplies the modifier.
+    "N",        IDM_FILE_NEW,       VIRTKEY, CONTROL
+    "O",        IDM_FILE_OPEN,      VIRTKEY, CONTROL
+    "S",        IDM_FILE_SAVE,      VIRTKEY, CONTROL
+    "P",        IDM_FILE_PRINT,     VIRTKEY, CONTROL
+    "Z",        IDM_EDIT_UNDO,      VIRTKEY, CONTROL
+    "X",        IDM_EDIT_CUT,       VIRTKEY, CONTROL
+    "C",        IDM_EDIT_COPY,      VIRTKEY, CONTROL
+    "V",        IDM_EDIT_PASTE,     VIRTKEY, CONTROL
     VK_DELETE,  IDM_EDIT_DELETE,    VIRTKEY
-    "^F",       IDM_EDIT_FIND,      VIRTKEY, CONTROL
+    "F",        IDM_EDIT_FIND,      VIRTKEY, CONTROL
     VK_F3,      IDM_EDIT_FIND_NEXT, VIRTKEY
-    "^H",       IDM_EDIT_REPLACE,   VIRTKEY, CONTROL
-    "^G",       IDM_EDIT_GOTO,      VIRTKEY, CONTROL
-    "^A",       IDM_EDIT_SELECT_ALL,VIRTKEY, CONTROL
+    "H",        IDM_EDIT_REPLACE,   VIRTKEY, CONTROL
+    "G",        IDM_EDIT_GOTO,      VIRTKEY, CONTROL
+    "A",        IDM_EDIT_SELECT_ALL,VIRTKEY, CONTROL
     VK_F5,      IDM_EDIT_TIME_DATE, VIRTKEY
 END
 

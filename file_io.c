@@ -3,6 +3,7 @@
 #include <commdlg.h>
 #include <strsafe.h>
 #include <stdlib.h>
+#include <limits.h>
 
 static TextEncoding DetectEncoding(const BYTE *data, DWORD size) {
     if (size >= 2 && data[0] == 0xFF && data[1] == 0xFE) {

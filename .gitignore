@@ -1,0 +1,9 @@
+build/
+tools/
+.vs/
+.DS_Store
+compile_commands.json
+*.o
+*.obj
+*.res
+*.exe
